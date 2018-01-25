@@ -2,9 +2,9 @@
 A PHP file for handle database
 
 **Overview**
+- Generate SQL
 - View table data from database
 - Insert data into table
-- Generate SQL
 - Update table
 - Delete data from Table
 - Trigger
@@ -15,4 +15,26 @@ Download
 Clone a copy of the main repo
 ```bash
 git clone https://github.com/zxalif/php-database-handler.git
+```
+
+Usages
+-------
+###Setup
+
+> Set host, username, password, and database name
+```bash
+$host = 'localhost';
+$user = 'root';
+$pwd = '';
+$db = 'cms';
+```
+
+###Use
+> Basic SQL Generate
+```bash
+include('php-database-handler/index.php');
+$cms = Controller($conn);
+$sql = $cms->generate('table_name', $type='view');
+echo $sql;
+> SELECT * FROM table_name;
 ```
