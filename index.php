@@ -7,25 +7,39 @@
 	class SQLCreate{
 		private $data = array();
 		private $options = array();
-		private function extractor(){
+		private function extractor($data=null){
+			if(null === $data){
+				$data = array();
+			}
 			$keys = array();
 			$values = array();
-			if(is_array($this->data) || is_object($this->data)){
-				foreach ($this->data as $key => $value) {
+			if(is_array($data) || is_object($data)){
+				foreach ($data as $key => $value) {
 					array_push($keys, $key);
 					array_push($values, $value);
 				}
 			}
 			return array($keys, $values);
 		}
-		function generate($className, $data=array(), $type="insert", $bulk=false, $options=null){
+		function generate($className, $data=null, $type=null, $options=null, $bulk=false){
+			if(null === $data){
+				$data = array();
+			}
+			else{
+				$this->data = $data;
+			}
 			$this->className = $className;
-			$this->data = $data;
 			if(null === $options){
 				$this->options = array();
 			}
 			else{
 				$this->options = $options;
+			}
+			if(null === $type){
+				$this->type = 'insert';
+			}
+			else{
+				$this->type = $type;
 			}
 			if($type === "insert"){
 				$sql = 'INSERT INTO ' . $this->className;
@@ -33,7 +47,7 @@
 				$value = '';
 				# code..
 				if($bulk == false){
-					list($keys, $values) = $this->extractor();
+					list($keys, $values) = $this->extractor($this->data);
 					for($i = 0; $i < count($keys); $i++){
 						if($i == count($keys)-1){
 							$key = $key . $keys[$i] . ')';
@@ -59,10 +73,26 @@
 				else{
 					$sql = 'SELECT * FROM ' . $this->className;
 					if(array_key_exists('where', $this->options)){
-
+						if(count($this->options) == 0){
+							$this->where = array();
+						}
+						else{
+							$this->where = $this->options['where'];
+						}
+					}
+					list($name, $val) = $this->extractor($this->where);
+					if(count($this->where) > 0){
+						$sql = $sql . ' WHERE ';
+						for($i = 0; $i < count($name); $i+=1){
+							if($i === count($name)-1){
+								$sql = $sql . $name[$i] . '="' . $val[$i] . '"';
+							}
+							else{
+								$sql = $sql . $name[$i] . '="' . $val[$i] . '" AND';
+							}
+						}
 					}
 				}
-
 				if(array_key_exists('sort', $this->options)){
 					if(is_array($this->options['sort']) || is_object($this->options['sort'])){
 						if(count($this->options['sort']) == 1){
@@ -207,7 +237,6 @@
 		}
 	}
 
-
 	class Controller extends CMSDelete{
 		function __construct($connection, $debug=false){
 			parent::__construct($connection);
@@ -227,7 +256,4 @@
 			}
 		}
 	}
-	$info = new SQLCreate();
-	echo $info->generate('table_name', 'view');
-
 ?>
