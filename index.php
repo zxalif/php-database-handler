@@ -73,12 +73,15 @@
 				else{
 					$sql = 'SELECT * FROM ' . $this->className;
 					if(array_key_exists('where', $this->options)){
-						if(count($this->options) == 0){
+						if(count($this->options['where']) == 0){
 							$this->where = array();
 						}
 						else{
 							$this->where = $this->options['where'];
 						}
+					}
+					else{
+						$this->where = array();
 					}
 					list($name, $val) = $this->extractor($this->where);
 					if(count($this->where) > 0){
@@ -261,5 +264,5 @@
 		}
 	}
 	//$info = new SQLCreate();
-	//echo $info->generate('table_name', array('where'=>'a', 'whera'=>'x'), $type='insert');
+	//echo $info->generate('table_name', array(), $type='view', array('sort'=>array('c_name')));
 ?>
