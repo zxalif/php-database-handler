@@ -33,8 +33,11 @@ $db = 'cms';
 > Basic SQL Generate
 ```bash
 include('php-database-handler/index.php');
-$cms = Controller($conn);
-$sql = $cms->generate('table_name', $type='view');
+$cms = new SQLCreate()
+$sql = $cms->generate('table_name', array(), $type='view');
 echo $sql;
 > SELECT * FROM table_name;
+$sql = $cms->generate('table_name', array('id'=>'1', 'name'=>'zxalif'), $type='insert');
+echo $sql;
+> INSERT INTO table_name(id, name) VALUES("1", "zxalif");
 ```

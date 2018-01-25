@@ -227,7 +227,7 @@
 			}
 		}
 	}
-	// $info = new Controller($conn, $debug=true);
-	// $result =  $info->getResult('class');
-	//echo $info->getError();
+	$info = new SQLCreate();
+	echo $info->generate('table_name', 'view');
+
 ?>
