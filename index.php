@@ -196,10 +196,14 @@
 					$this->where = $this->options['where'];
 				}
 			}
+			else{
+				$this->where = array();
+			}
 			$this->className = $className;
-			
+			$kwrgs = array();
+			$kwrgs['where'] = $this->where;
 			if(count($this->fields) == 0){
-				$this->SQL = parent::generate($className, $data=array(), $type='view');
+				$this->SQL = parent::generate($className, $data=array(), $type='view', $kwrgs);
 				$result = mysqli_query($this->connection, $this->SQL);
 				if(!$result){
 					$this->error = mysqli_error($this->connection);
@@ -256,4 +260,6 @@
 			}
 		}
 	}
+	//$info = new SQLCreate();
+	//echo $info->generate('table_name', array('where'=>'a', 'whera'=>'x'), $type='insert');
 ?>
