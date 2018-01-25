@@ -22,8 +22,8 @@ Usages
 ###### Setup
 
 > Set host, username, password, and database name
+- conn/conn.php
 ```bash
-conn/conn.php**
 $host = 'localhost';
 $user = 'root';
 $pwd = '';
