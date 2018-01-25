@@ -192,7 +192,7 @@
 				}
 			}
 			else{
-				$this->fields = array()
+				$this->fields = array();
 			}
 			if(array_key_exists('where', $this->options)){
 				if(count($this->options['where']) == 0){
@@ -278,5 +278,6 @@
 			}
 		}
 	}
-	
+	//$info = new SQLCreate();
+	//echo $info->generate('table_name', array(), $type='view', array('sort'=>array('c_name')));
 ?>
