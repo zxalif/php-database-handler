@@ -205,7 +205,7 @@
 			else{
 				$this->where = array();
 			}
-			if(array_key_exists('sort', $this->options){
+			if(array_key_exists('sort', $this->options)){
 				if(count($this->options['sort']) == 0){
 					$this->sort = array();
 				}
