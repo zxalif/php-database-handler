@@ -191,6 +191,9 @@
 					$this->fielss = $this->options['fields'];
 				}
 			}
+			else{
+				$this->fields = array()
+			}
 			if(array_key_exists('where', $this->options)){
 				if(count($this->options['where']) == 0){
 					$this->where = array();
@@ -202,9 +205,21 @@
 			else{
 				$this->where = array();
 			}
+			if(array_key_exists('sort', $this->options){
+				if(count($this->options['sort']) == 0){
+					$this->sort = array();
+				}
+				else{
+					$this->sort = $this->options['sort'];
+				}
+			}
+			else{
+				$this->sort = array();
+			}
 			$this->className = $className;
 			$kwrgs = array();
 			$kwrgs['where'] = $this->where;
+			$kwrgs['sort'] = $this->sort;
 			if(count($this->fields) == 0){
 				$this->SQL = parent::generate($className, $data=array(), $type='view', $kwrgs);
 				$result = mysqli_query($this->connection, $this->SQL);
@@ -263,6 +278,5 @@
 			}
 		}
 	}
-	//$info = new SQLCreate();
-	//echo $info->generate('table_name', array(), $type='view', array('sort'=>array('c_name')));
+	
 ?>
