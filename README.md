@@ -19,7 +19,7 @@ git clone https://github.com/zxalif/php-database-handler.git
 
 Usages
 -------
-######Setup
+###### Setup
 
 > Set host, username, password, and database name
 ```bash
@@ -29,7 +29,7 @@ $pwd = '';
 $db = 'cms';
 ```
 
-######Use
+###### Use
 > Basic SQL Generate
 ```bash
 include('php-database-handler/index.php');

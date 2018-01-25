@@ -229,6 +229,5 @@
 	}
 	// $info = new Controller($conn, $debug=true);
 	// $result =  $info->getResult('class');
-	// print_r($result);
 	//echo $info->getError();
 ?>
