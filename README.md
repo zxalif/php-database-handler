@@ -1,7 +1,7 @@
 # php-database-handler
 A PHP file for handle database
 
-** Overview **
+**Overview**
 > View table data from database
 > Insert data into table
 > Generate SQL
