@@ -9,3 +9,10 @@ A PHP file for handle database
 - Delete data from Table
 - Trigger
 - Index management
+
+Download
+---------
+Clone a copy of the main repo
+'''
+git clone https://github.com/zxalif/php-database-handler.git
+'''
