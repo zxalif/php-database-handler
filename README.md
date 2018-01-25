@@ -13,6 +13,6 @@ A PHP file for handle database
 Download
 ---------
 Clone a copy of the main repo
-'''
+'''bash
 git clone https://github.com/zxalif/php-database-handler.git
 '''
