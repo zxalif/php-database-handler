@@ -91,7 +91,7 @@
 								$sql = $sql . $name[$i] . '="' . $val[$i] . '"';
 							}
 							else{
-								$sql = $sql . $name[$i] . '="' . $val[$i] . '" AND';
+								$sql = $sql . $name[$i] . '="' . $val[$i] . '" AND ';
 							}
 						}
 					}
@@ -130,6 +130,7 @@
 		private $data = null;
 		private $className = null;
 		private $error = null;
+		private $errorNo = null;
 		private $SQL = null;
 		function __construct($connection){
 			$this->connection = $connection;
@@ -143,6 +144,7 @@
 				$result = mysqli_query($this->connection, $this->SQL);
 				if(!$result){
 					$this->error = mysqli_error($this->connection);
+					$this->errorNo = mysqli_errno($this->connection);
 				}
 				return $result;
 			}
@@ -150,6 +152,9 @@
 		}
 		protected function getError(){
 			return $this->error;
+		}
+		function getErrorNo(){
+			return $this->errorNo;
 		}
 		protected function getSQL(){
 			return $this->SQL;
@@ -177,6 +182,17 @@
 				$options = array(); // set default parameters
 			}
 			$this->options = $options;
+			if(array_key_exists('classes', $this->options)){
+				if($this->options['classes'] === true){
+					$this->classes = true;
+				}
+				else{
+					$this->classes = false;
+				}
+			}
+			else{
+				$this->classes = false;
+			}
 			if(array_key_exists('limit', $this->options)){
 				$this->limit = $this->options['limit'];
 			}
@@ -278,6 +294,4 @@
 			}
 		}
 	}
-	//$info = new SQLCreate();
-	//echo $info->generate('table_name', array(), $type='view', array('sort'=>array('c_name')));
 ?>
