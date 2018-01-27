@@ -236,6 +236,7 @@
 			$kwrgs = array();
 			$kwrgs['where'] = $this->where;
 			$kwrgs['sort'] = $this->sort;
+			$kwrgs['limit'] = $this->limit;
 			if(count($this->fields) == 0){
 				$this->SQL = parent::generate($className, $data=array(), $type='view', $kwrgs);
 				$result = mysqli_query($this->connection, $this->SQL);
@@ -294,4 +295,6 @@
 			}
 		}
 	}
+	//$info = new SQLCreate();
+	//echo $info->generate('table_name', array(), $type='view', array('sort'=>array('c_name')));
 ?>
