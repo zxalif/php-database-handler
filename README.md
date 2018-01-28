@@ -38,7 +38,7 @@ View data from table
 ```bash
 include('php-database-handler/index.php');
 $cms = new SQLCreate();
-$sql = $cms->generate('table_name', array(), $type='view');
+$sql = $cms->generate('table_name', null, $type='view');
 echo $sql;
 > SELECT * FROM table_name;
 ```
@@ -48,7 +48,17 @@ View data from table with limit
 ```bash
 include('php-database-handler/index.php');
 $cms = new SQLCreate();
-$sql = $cms->generate('table_name', array('id'=>'1', 'name'=>'zxalif'), $type='view', array('limit'=>10));
+$sql = $cms->generate('table_name', null, $type='view', array('limit'=>10));
+echo $sql;
+> SELECT * FROM table_name LIMIT 10;
+```
+
+Using limit for for spliting rows
+---------------------------------
+```bash
+include('php-database-handler/index.php');
+$cms = new SQLCreate();
+$sql = $cms->generate('table_name', null, $type='view', array('limit'=>array(10, 20)));
 echo $sql;
 > SELECT * FROM table_name LIMIT 10;
 ```

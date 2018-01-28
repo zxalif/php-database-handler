@@ -110,7 +110,14 @@
 					}
 				}
 				if(array_key_exists('limit', $this->options)){
-					$sql = $sql . ' LIMIT ' . $this->options['limit'];
+					if(!is_array($this->options['limit']) && !is_object($this->options)){
+						$sql = $sql . ' LIMIT ' . $this->options['limit'];
+					}
+					elseif (is_array($this->options['limit'])) {
+						if(count($this->options['limit']) == 2){
+							$sql = $sql . ' LIMIT ' . $this->options['limit'][0] . ', ' . $this->options['limit'][1];
+						}
+					}
 				}
 				return $sql;
 			}
@@ -303,6 +310,4 @@
 			}
 		}
 	}
-	//$info = new SQLCreate();
-	//echo $info->generate('table_name', array(), $type='view', array('sort'=>array('c_name')));
 ?>
