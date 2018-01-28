@@ -1,4 +1,4 @@
-# php-database-handler
+# PHP MYSQL DATABASE HANDLER
 A PHP file for handle database
 
 **Overview**
@@ -14,7 +14,7 @@ Download
 ---------
 Clone a copy of the main repo
 ```bash
-git clone https://github.com/zxalif/php-database-handler.git
+https://github.com/zxalif/php-mysql-handler.git
 ```
 
 Usages
