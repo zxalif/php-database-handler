@@ -42,7 +42,7 @@
 				$this->type = $type;
 			}
 			if(array_key_exists('bulk', $options)){
-				$this->bulk = $options['bulk']
+				$this->bulk = $options['bulk'];
 			}
 			else{
 				$this->bulk = false;
