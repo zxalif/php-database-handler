@@ -21,7 +21,7 @@
 			}
 			return array($keys, $values);
 		}
-		function generate($className, $data=null, $type=null, $options=null, $bulk=false){
+		function generate($className, $data=null, $type=null, $options=null){
 			if(null === $data){
 				$data = array();
 			}
@@ -41,12 +41,18 @@
 			else{
 				$this->type = $type;
 			}
+			if(array_key_exists('bulk', $options)){
+				$this->bulk = $options['bulk']
+			}
+			else{
+				$this->bulk = false;
+			}
 			if($type === "insert"){
 				$sql = 'INSERT INTO ' . $this->className;
 				$key = '';
 				$value = '';
 				# code..
-				if($bulk == false){
+				if($this->bulk == false){
 					list($keys, $values) = $this->extractor($this->data);
 					for($i = 0; $i < count($keys); $i++){
 						if($i == count($keys)-1){
