@@ -197,7 +197,7 @@
 				$this->limit = $this->options['limit'];
 			}
 			else{
-				$this->limit = 10;
+				$this->limit = null;
 			}
 			if(array_key_exists('fielss', $this->options)){
 				if(count($this->options['fields']) == 0){
@@ -236,7 +236,9 @@
 			$kwrgs = array();
 			$kwrgs['where'] = $this->where;
 			$kwrgs['sort'] = $this->sort;
-			$kwrgs['limit'] = $this->limit;
+			if(!is_null($this->limit)){
+				$kwrgs['limit'] = $this->limit;
+			}
 			if(count($this->fields) == 0){
 				$this->SQL = parent::generate($className, $data=array(), $type='view', $kwrgs);
 				$result = mysqli_query($this->connection, $this->SQL);
