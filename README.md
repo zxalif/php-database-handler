@@ -40,7 +40,7 @@ include('php-database-handler/index.php');
 $cms = new SQLCreate();
 $sql = $cms->generate('table_name', null, $type='view');
 echo $sql;
-> SELECT * FROM table_name;
+> SELECT * FROM table_name
 ```
 
 View data from table with limit
@@ -50,7 +50,7 @@ include('php-database-handler/index.php');
 $cms = new SQLCreate();
 $sql = $cms->generate('table_name', null, $type='view', array('limit'=>10));
 echo $sql;
-> SELECT * FROM table_name LIMIT 10;
+> SELECT * FROM table_name LIMIT 10
 ```
 
 Using limit for for spliting rows
@@ -60,7 +60,7 @@ include('php-database-handler/index.php');
 $cms = new SQLCreate();
 $sql = $cms->generate('table_name', null, $type='view', array('limit'=>array(10, 20)));
 echo $sql;
-> SELECT * FROM table_name LIMIT 10;
+> SELECT * FROM table_name LIMIT 10, 20
 ```
 
 Insert data into table
@@ -70,6 +70,6 @@ include('php-database-handler/index.php');
 $cms = new SQLCreate();
 $sql = $cms->generate('table_name', array('id'=>'1', 'name'=>'zxalif'), $type='insert');
 echo $sql;
-> INSERT INTO table_name(id, name) VALUES("1", "zxalif");
+> INSERT INTO table_name(id, name) VALUES("1", "zxalif")
 ```
 :+1:
