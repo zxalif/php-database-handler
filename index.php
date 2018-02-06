@@ -41,7 +41,7 @@
 			else{
 				$this->type = $type;
 			}
-			if(array_key_exists('bulk', $options)){
+			if(array_key_exists('bulk', $this->options)){
 				$this->bulk = $options['bulk'];
 			}
 			else{
@@ -65,7 +65,7 @@
 						}
 						else{
 							$key = $key . $keys[$i] . ', ';
-							$value = $value . $values . '", ';
+							$value = $value . $values[$i] . '", "';
 						}
 					}
 					$sql = 'INSERT INTO ' . $this->className . $key . ' VALUES' . $value ;
@@ -77,7 +77,39 @@
 					$sql = 'SELECT * FROM ' . $this->className;
 				}
 				else{
-					$sql = 'SELECT * FROM ' . $this->className;
+					if (array_key_exists('count', $this->options)){
+						if(count($this->options['count']) == 0){
+							$sql = 'SELECT * FROM ' . $this->className;
+						}
+						elseif(count($this->options['count']) == 1){
+							if($this->options['count'][1] != false || $this->options['count'][1] != true){
+								$sql = 'SELECT COUNT(*) AS ' . $this->options['count'] .  ' FROM ' . $this->className;
+							}
+							else{
+								$sql = 'SELECT * FROM ' . $this->className;
+							}
+
+						}
+						elseif (count($this->options['count']) == 2) {
+							if($this->options['count'][1] === true){
+								$sql = 'SELECT *, COUNT(*) AS ' . $this->options['count'] .  ' FROM ' . $this->className;
+							}
+							elseif($this->options['count'][1] === false){
+								$sql = 'SELECT COUNT(*) AS ' . $this->options['count'] .  ' FROM ' . $this->className;
+							}
+							else{
+								$sql = 'SELECT * FROM ' . $this->className;
+							}
+						}
+						else{
+							$sql = 'SELECT * FROM ' . $this->className;
+						}
+
+					}
+					else{
+						$sql = 'SELECT * FROM ' . $this->className;
+					}
+					
 					if(array_key_exists('where', $this->options)){
 						if(count($this->options['where']) == 0){
 							$this->where = array();
@@ -138,6 +170,7 @@
 		}
 	}
 	
+	// CLASS FOR INSERT DATA INTO DATABASE
 	class CMSInsert extends SQLCreate{
 		private $connection = null;
 		private $data = null;
@@ -152,8 +185,10 @@
 		function insert($className, $data, $bulk=false){
 			$this->className = $className;
 			$this->data = $data;
+			$options = array();
+			$options['bulk'] = $bulk;
 			if(!is_null($this->connection)){
-				$this->SQL = $this->generate($this->className, $this->data, 'insert', $bulk);
+				$this->SQL = $this->generate($this->className, $this->data, 'insert', $options);
 				$result = mysqli_query($this->connection, $this->SQL);
 				if(!$result){
 					$this->error = mysqli_error($this->connection);
@@ -245,10 +280,17 @@
 			else{
 				$this->sort = array();
 			}
+			if(array_key_exists('count', $this->options)){
+				$this->count = $this->options['count'];
+			}
+			else{
+				$this->count = array();
+			}
 			$this->className = $className;
 			$kwrgs = array();
 			$kwrgs['where'] = $this->where;
 			$kwrgs['sort'] = $this->sort;
+			$kwrgs['count'] = $this->count;
 			if(!is_null($this->limit)){
 				$kwrgs['limit'] = $this->limit;
 			}
