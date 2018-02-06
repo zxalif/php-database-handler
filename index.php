@@ -82,8 +82,8 @@
 							$sql = 'SELECT * FROM ' . $this->className;
 						}
 						elseif(count($this->options['count']) == 1){
-							if($this->options['count'][1] != false || $this->options['count'][1] != true){
-								$sql = 'SELECT COUNT(*) AS ' . $this->options['count'] .  ' FROM ' . $this->className;
+							if($this->options['count'][0] != false || $this->options['count'][0] != true){
+								$sql = 'SELECT COUNT(*) AS ' . $this->options['count'][0] .  ' FROM ' . $this->className;
 							}
 							else{
 								$sql = 'SELECT * FROM ' . $this->className;
@@ -92,10 +92,10 @@
 						}
 						elseif (count($this->options['count']) == 2) {
 							if($this->options['count'][1] === true){
-								$sql = 'SELECT *, COUNT(*) AS ' . $this->options['count'] .  ' FROM ' . $this->className;
+								$sql = 'SELECT *, (SELECT COUNT(*) FROM ' . $this->className . ') AS ' . $this->options['count'][0] .  ' FROM ' . $this->className;
 							}
 							elseif($this->options['count'][1] === false){
-								$sql = 'SELECT COUNT(*) AS ' . $this->options['count'] .  ' FROM ' . $this->className;
+								$sql = 'SELECT COUNT(*) AS ' . $this->options['count'][0] .  ' FROM ' . $this->className;
 							}
 							else{
 								$sql = 'SELECT * FROM ' . $this->className;
