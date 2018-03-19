@@ -73,10 +73,13 @@
 				return $sql;
 			}
 			elseif ($type === "view") {
+				// IF NO EXTRA OPTION THERE
 				if(count($this->options) == 0){
 					$sql = 'SELECT * FROM ' . $this->className;
 				}
 				else{
+					// SELECT COUNT(*) FROM TABLE
+					// COUNT THE ROW NUMBER
 					if (array_key_exists('count', $this->options)){
 						if(count($this->options['count']) == 0){
 							$sql = 'SELECT * FROM ' . $this->className;
@@ -154,12 +157,52 @@
 				return $sql;
 			}
 			elseif ($type === "delete") {
+				$sql = 'DELETE FROM ' . $this->className . ' ';
+				if(is_array($this->options)){
+					if(array_key_exists('where', $this->options)){
+						if(is_array($this->options['where']) && count($this->options['where']) > 0){
+							list($key, $value) = $this->extractor($this->options['where']);
+							for($i = 0; $i < count($key); $i++){
+								if($i == 0){
+									if(count($key) > 1){
+										$sql = $sql . 'WHERE ' . $key[$i] . '="' . $value[$i] . '" AND ';
+									}
+									else{
+										$sql = $sql . 'WHERE ' . $key[$i] . '="' . $value[$i] . '"';
+									}
+									
+								}
+								elseif ($i == count($key)-1) {
+									$sql = $sql . $key[$i] . '="' . $value[$i] . '"';
+								}
+								else{
+									$sql = $sql . $key[$i] . '="' . $value[$i] . '" AND ';
+								}
+							}
+						}
+					}
+				}
 				# code...
-				return true;
+				return $sql;
 			}
 			elseif ($type === "update") {
-				# code...
-				return true;
+				$sql = 'UPDATE ' . $this->className . ' SET ';
+				list($key, $value) = $this->extractor($data);
+				for($i = 0; $i < count($key); $i++){
+					if($i == count($key)-1){
+						$sql = $sql . $key[$i] . '="' . $value[$i] . '"';
+					}
+					else{
+						$sql = $sql . $key[$i] . '="' . $value[$i] . '", ';
+					}
+				}
+				if(array_key_exists('u_id', $this->options)){
+					if(count($this->options['u_id']) == 1){
+						list($key, $value) = $this->extractor($this->options['u_id']);
+						$sql = $sql . ' WHERE ' . $key[0] . '="' . $value[0] . '"';
+					}
+				}
+				return $sql;
 			}
 			elseif ($type === "create") {
 				# code...
@@ -322,14 +365,132 @@
 	}
 
 	class CMSUpdate extends CMSDBView{
+		private $className = null;
+		private $SQL = null;
+		private $connection = null;
+		private $options = null;
+		private $kwrgs = array();
+		private $where = array();
+		private $error = null;
+		private $errorNo = null;
 		function __construct($connection){
-			parent::__construct($connection);
+			$this->connection = $connection;
+			parent::__construct($this->connection);
+
+		}
+
+		function update($className=null, $data=null, $options=null){
+			$this->className = $className;
+			$this->options = $options;
+			$kwrgs = array();
+			if(array_key_exists('u_id', $this->options)){
+				$kwrgs['u_id'] = $this->options['u_id'];
+			}
+			
+			if(!is_null($this->connection)){
+				$this->SQL = parent::generate($this->className, $data, 'update', $kwrgs);
+				$result = mysqli_query($this->connection, $this->SQL);
+				if(!$result){
+					$this->error = mysqli_error($this->connection);
+					$this->errorNo = mysqli_errno($this->connection);
+				}
+				return $result;
+			}
+		}
+
+		function getSQL(){
+			if(is_null($this->className) && is_null($this->SQL)){
+				return parent::getSQL();
+			}
+			else{
+				return $this->SQL;
+			}
+		}
+
+		function getError(){
+			if(is_null($this->className) && is_null($this->SQL)){
+				return parent::getError();
+			}
+			else{
+				return $this->error;
+			}
+		}
+		function getErrorNo(){
+			if(is_null($this->className) && is_null($this->SQL)){
+				return parent::getError();
+			}
+			else{
+				return $this->errorNo;
+			}
 		}
 	}
 
 	class CMSDelete extends CMSUpdate{
+
+		private $className = null;
+		private $SQL = null;
+		private $connection = null;
+		private $options = null;
+		private $kwrgs = array();
+		private $where = array();
+		private $error = null;
+		private $errorNo = null;
+
 		function __construct($connection){
+			$this->connection = $connection;
 			parent::__construct($connection);
+		}
+
+		function delete($className, $options=null){
+			$this->className = $className;
+			if(null == $options){
+				$this->options = array();
+			}
+			else{
+				$this->options = $options;
+			}
+			if(is_array($this->options)){
+				if(array_key_exists('u_id', $this->options)){
+					$kwrgs['where'] = $this->options['u_id'];
+				}
+			}
+			
+			if(!is_null($this->connection)){
+				$this->SQL = parent::generate($this->className, null, 'delete', $kwrgs);
+				$result = mysqli_query($this->connection, $this->SQL);
+				if(!$result){
+					$this->error = mysqli_error($this->connection);
+					$this->errorNo = mysqli_errno($this->connection);
+				}
+				return $result;
+			}
+		}
+
+		function getSQL(){
+			if(is_null($this->className) && is_null($this->SQL)){
+				return parent::getSQL();
+			}
+			else{
+				return $this->SQL;
+			}
+		}
+
+		function getError(){
+			if(is_null($this->className) && is_null($this->SQL)){
+				return parent::getError();
+			}
+			else{
+				return $this->error;
+			}
+		}
+
+		function getErrorNo(){
+			if(is_null($this->className) && is_null($this->SQL)){
+				return parent::getError();
+			}
+			else{
+				return $this->errorNo;
+			}
 		}
 	}
 
