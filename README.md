@@ -14,7 +14,7 @@ Download
 ---------
 Clone a copy of the main repo
 ```bash
-https://github.com/zxalif/php-mysql-handler.git
+git https://github.com/zxalif/php-mysql-handler.git
 ```
 
 Usages

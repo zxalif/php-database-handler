@@ -70,6 +70,48 @@
 					}
 					$sql = 'INSERT INTO ' . $this->className . $key . ' VALUES' . $value ;
 				}
+				elseif($this->bulk == true){
+					// DATA 0 INDEX IS ARRAY KEYS
+					// DATA 1 INDEX IS BULK DATUMN
+					$sql = 'INSERT INTO ' . $this->className;
+					$key = '';
+					$keys = $this->data[0];					
+					$reminder = 1;
+					if(count($this->data) == 2 && is_array($this->data[0]) && is_array($this->data)){
+						for($index = 0; $index < count($this->data[1]); $index++){
+							$values = $this->data[1][$index];
+							$value = '';
+							for($i = 0; $i < count($keys); $i++){
+								if($i == count($keys)-1){
+									if($reminder == 1){
+										$key = $key . $keys[$i] . ')';
+									}
+									$value = $value . $values[$i] . '")';
+								}
+								elseif($i==0){
+									if($reminder == 1){
+										$key = $key . '(' . $keys[$i] . ', ';
+									}
+									$value = $value . '("' . $values[$i] . '", "';
+								}
+								else{
+									if($reminder == 1){
+										$key = $key . $keys[$i] . ', ';
+									}
+									$value = $value . $values[$i] . '", "';
+								}
+							}
+							if($reminder == 1){
+								$sql = 'INSERT INTO ' . $this->className . $key . ' VALUES ' . $value ;
+							}
+							else{
+								$sql = $sql . ', ' . $value;
+							}
+							
+							$reminder += 1;
+						}
+					}
+				}
 				return $sql;
 			}
 			elseif ($type === "view") {
@@ -513,4 +555,13 @@
 			}
 		}
 	}
+	
+	
+	//$info = new Controller($conn, $debug=True);
+	//echo $info->generate('class_name', $data=array(array('class_id', 'class_name', 'class_code'),
+	//					array(array('1', 'Class Name 1', 'CN1'), 
+	//							array('2', 'Class Name 2', 'CN2'),
+	//							array('3', 'Class Name 1', 'CN3'),
+	//							)), 
+	//							$type='insert', $options=array('bulk'=> true));
 ?>
