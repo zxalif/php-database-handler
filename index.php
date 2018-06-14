@@ -1,8 +1,4 @@
 <?php
-	// Check for session and cookies
-	// and redirect to login page or admin panel
-	// restrict area
-	// anybody can access the database but no one can access the assets
 	include('conn/conn.php');
 	class SQLCreate{
 		private $data = array();
