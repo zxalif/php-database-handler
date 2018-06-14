@@ -155,6 +155,7 @@
 						$sql = 'SELECT * FROM ' . $this->className;
 					}
 					
+					// SELECT FROM WHERE
 					if(array_key_exists('where', $this->options)){
 						if(count($this->options['where']) == 0){
 							$this->where = array();
@@ -178,14 +179,83 @@
 							}
 						}
 					}
+					
+					// IN BETWEEN
+					if(array_key_exists('between', $this->options)){
+						if(count($this->options['between']) == 0){
+							$this->between = array();
+						}
+						else{
+							$this->between = $this->options['between'];
+						}
+					}
+					else{
+						$this->between = array();
+					}
+					if(empty($this->where)){
+						$sql = $sql . ' WHERE ';
+					}
+					else{
+						$sql = $sql . ' AND ';
+					}
+					list($name, $val) = $this->extractor($this->between);
+					if(count($this->between) > 0){
+						for($i = 0; $i < count($name); $i+=1){
+							if($i === count($name)-1){
+								$sql = $sql . $name[$i] . ' BETWEEN "' . $val[$i][0] . '" AND "' . $val[$i][1] . '"';
+							}
+							else{
+								$sql = $sql . $name[$i] . ' BETWEEN "' . $val[$i][0] . '" AND "' . $val[$i][1] . '" AND ';
+							}
+						}
+					}
 				}
+				
+				// GROUP BY
+				if(array_key_exists('group', $this->options)){
+					if(is_array($this->options['group']) || is_object($this->options['group'])){
+						if(count($this->options['group']) == 1){
+							$sql = $sql . ' GROUP BY (' . $this->options['group'][0] . ')';
+						}
+						else{
+							for($index = 0; $index < count($this->options['group']); $index++){
+								if($index == 0){
+									$sql = $sql . ' GROUP BY ' . $this->options['group'][$index] . ', ';
+								}
+								elseif($index == count($this->options['group'])){
+									$sql = $sql . $this->options['group'][$index];
+								}
+								else{
+									$sql = $sql . $this->options['group'][$index] . ', ';
+								}
+							}
+						}
+					}
+				}
+				
+				// ORDER BY
 				if(array_key_exists('sort', $this->options)){
 					if(is_array($this->options['sort']) || is_object($this->options['sort'])){
 						if(count($this->options['sort']) == 1){
 							$sql = $sql . ' ORDER BY ' . $this->options['sort'][0];
 						}
+						else{
+							for($index = 0; $index < count($this->options['sort']); $index++){
+								if($index == 0){
+									$sql = $sql . ' ORDER BY ' . $this->options['sort'][$index] . ', ';
+								}
+								elseif($index == count($this->options['sort'])){
+									$sql = $sql . $this->options['sort'][$index];
+								}
+								else{
+									$sql = $sql  . $this->options['sort'][$index] . ', ';
+								}
+							}
+						}
 					}
 				}
+				
+				// LIMIT
 				if(array_key_exists('limit', $this->options)){
 					if(!is_array($this->options['limit']) && !is_object($this->options)){
 						$sql = $sql . ' LIMIT ' . $this->options['limit'];
@@ -354,6 +424,17 @@
 			else{
 				$this->where = array();
 			}
+			if(array_key_exists('between', $this->options)){
+				if(count($this->options['between']) == 0){
+					$this->between = array();
+				}
+				else{
+					$this->between = $this->options['between'];
+				}
+			}
+			else{
+				$this->between = array();
+			}
 			if(array_key_exists('sort', $this->options)){
 				if(count($this->options['sort']) == 0){
 					$this->sort = array();
@@ -365,6 +446,18 @@
 			else{
 				$this->sort = array();
 			}
+			
+			if(array_key_exists('group', $this->options)){
+				if(count($this->options['group']) == 0){
+					$this->group = array();
+				}
+				else{
+					$this->group = $this->options['group'];
+				}
+			}
+			else{
+				$this->group = array();
+			}
 			if(array_key_exists('count', $this->options)){
 				$this->count = $this->options['count'];
 			}
@@ -375,7 +468,9 @@
 			$kwrgs = array();
 			$kwrgs['where'] = $this->where;
 			$kwrgs['sort'] = $this->sort;
+			$kwrgs['group'] = $this->group;
 			$kwrgs['count'] = $this->count;
+			$kwrgs['between'] = $this->between;
 			if(!is_null($this->limit)){
 				$kwrgs['limit'] = $this->limit;
 			}
@@ -459,7 +554,7 @@
 		}
 		function getErrorNo(){
 			if(is_null($this->className) && is_null($this->SQL)){
-				return parent::getError();
+				return parent::getErrorNo();
 			}
 			else{
 				return $this->errorNo;
@@ -528,7 +623,7 @@
 
 		function getErrorNo(){
 			if(is_null($this->className) && is_null($this->SQL)){
-				return parent::getError();
+				return parent::getErrorNo();
 			}
 			else{
 				return $this->errorNo;
@@ -549,19 +644,20 @@
 				return null;
 			}
 		}
+		
+		function getErrorNo(){
+			if($this->debug === true){
+				return parent::getErrorNo();
+			}
+			else{
+				return null;
+			}
+		}
+		
 		function getSQL(){
 			if($this->debug){
 				return parent::getSQL();
 			}
 		}
 	}
-	
-	
-	//$info = new Controller($conn, $debug=True);
-	//echo $info->generate('class_name', $data=array(array('class_id', 'class_name', 'class_code'),
-	//					array(array('1', 'Class Name 1', 'CN1'), 
-	//							array('2', 'Class Name 2', 'CN2'),
-	//							array('3', 'Class Name 1', 'CN3'),
-	//							)), 
-	//							$type='insert', $options=array('bulk'=> true));
 ?>
