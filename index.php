@@ -1,4 +1,8 @@
 <?php
+	// Check for session and cookies
+	// and redirect to login page or admin panel
+	// restrict area
+	// anybody can access the database but no one can access the assets
 	include('conn/conn.php');
 	class SQLCreate{
 		private $data = array();
@@ -188,10 +192,10 @@
 					else{
 						$this->between = array();
 					}
-					if(empty($this->where)){
+					if(empty($this->where) && !empty($this->between)){
 						$sql = $sql . ' WHERE ';
 					}
-					else{
+					elseif(!empty($this->where) && !empty($this->between)){
 						$sql = $sql . ' AND ';
 					}
 					list($name, $val) = $this->extractor($this->between);
