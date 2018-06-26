@@ -56,8 +56,14 @@
 					list($keys, $values) = $this->extractor($this->data);
 					for($i = 0; $i < count($keys); $i++){
 						if($i == count($keys)-1){
-							$key = $key . $keys[$i] . ')';
-							$value = $value . $values[$i] . '")';
+							if(count($values) == 1){
+								$key = $key . '(' . $keys[$i] . ')';
+								$value = $value . '("' . $values[$i] . '")';
+							}
+							else{
+								$key = $key . $keys[$i] . ')';
+								$value = $value . $values[$i] . '")';
+							}
 						}
 						elseif($i==0){
 							$key = $key . '(' . $keys[$i] . ', ';
