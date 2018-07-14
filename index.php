@@ -1,8 +1,11 @@
+<!--
+	Name of Library: PHP MySQL Handler
+	Author: Alif Jahan
+	url: https://www.github.com/zxalif/php-database-handler
+	License: MIT
+-->
+
 <?php
-	// Check for session and cookies
-	// and redirect to login page or admin panel
-	// restrict area
-	// anybody can access the database but no one can access the assets
 	include('conn/conn.php');
 	class SQLCreate{
 		private $data = array();
@@ -122,6 +125,7 @@
 			}
 			elseif ($type === "view") {
 				// IF NO EXTRA OPTION THERE
+				$reminder = false;
 				if(count($this->options) == 0){
 					$sql = 'SELECT * FROM ' . $this->className;
 				}
@@ -161,6 +165,7 @@
 						$sql = 'SELECT * FROM ' . $this->className;
 					}
 					
+					$reminder = false;
 					// SELECT FROM WHERE
 					if(array_key_exists('where', $this->options)){
 						if(count($this->options['where']) == 0){
@@ -175,6 +180,7 @@
 					}
 					list($name, $val) = $this->extractor($this->where);
 					if(count($this->where) > 0){
+						$reminder = true;
 						$sql = $sql . ' WHERE ';
 						for($i = 0; $i < count($name); $i+=1){
 							if($i === count($name)-1){
@@ -182,6 +188,36 @@
 							}
 							else{
 								$sql = $sql . $name[$i] . '="' . $val[$i] . '" AND ';
+							}
+						}
+					}
+					
+					// SELECT FROM WHERE NOT
+					if(array_key_exists('wheren', $this->options)){
+						if(count($this->options['wheren']) == 0){
+							$this->wheren = array();
+						}
+						else{
+							$this->wheren = $this->options['wheren'];
+						}
+					}
+					else{
+						$this->wheren = array();
+					}
+					list($name, $val) = $this->extractor($this->wheren);
+					if(count($this->wheren) > 0){
+						if($reminder == true){
+							$sql = $sql . ' AND ';
+						}
+						else{
+							$sql = $sql . ' WHERE ';
+						}
+						for($i = 0; $i < count($name); $i+=1){
+							if($i === count($name)-1){
+								$sql = $sql . $name[$i] . '!="' . $val[$i] . '"';
+							}
+							else{
+								$sql = $sql . $name[$i] . '!="' . $val[$i] . '" AND ';
 							}
 						}
 					}
@@ -430,6 +466,19 @@
 			else{
 				$this->where = array();
 			}
+			
+			if(array_key_exists('wheren', $this->options)){
+				if(count($this->options['wheren']) == 0){
+					$this->wheren = array();
+				}
+				else{
+					$this->wheren = $this->options['wheren'];
+				}
+			}
+			else{
+				$this->wheren = array();
+			}
+			
 			if(array_key_exists('between', $this->options)){
 				if(count($this->options['between']) == 0){
 					$this->between = array();
@@ -477,6 +526,7 @@
 			$kwrgs['group'] = $this->group;
 			$kwrgs['count'] = $this->count;
 			$kwrgs['between'] = $this->between;
+			$kwrgs['wheren'] = $this->wheren;
 			if(!is_null($this->limit)){
 				$kwrgs['limit'] = $this->limit;
 			}
