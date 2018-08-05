@@ -1,9 +1,3 @@
-<!--
-	Name of Library: PHP MySQL Handler
-	Author: Alif Jahan
-	url: https://www.github.com/zxalif/php-database-handler
-	License: MIT
--->
 
 <?php
 	include('conn/conn.php');
@@ -222,6 +216,68 @@
 						}
 					}
 					
+					// SELECT FROM WHERE OR
+					$reminder = false;
+					if(array_key_exists('whereo', $this->options)){
+						if(count($this->options['whereo']) == 0){
+							$this->whereo = array();
+						}
+						else{
+							$this->whereo = $this->options['whereo'];
+						}
+					}
+					else{
+						$this->whereo = array();
+					}
+					list($name, $val) = $this->extractor($this->whereo);
+					if(count($this->whereo) > 0){
+						if(count($this->wheren) > 0 || count($this->where) > 0){
+							$sql = $sql . ' OR ';
+						}
+						else{
+							$sql = $sql . ' WHERE ';
+						}
+						for($i = 0; $i < count($name); $i+=1){
+							if($i === count($name)-1){
+								$sql = $sql . $name[$i] . '="' . $val[$i] . '"';
+							}
+							else{
+								$sql = $sql . $name[$i] . '="' . $val[$i] . '" OR ';
+							}
+						}
+					}
+					
+					// WHERE LIKE
+					if(array_key_exists('wherel', $this->options)){
+						if(count($this->options['wherel']) == 0){
+							$this->wherel = array();
+						}
+						else{
+							$this->wherel = $this->options['wherel'];
+						}
+					}
+					else{
+						$this->wherel = array();
+					}
+					list($name, $val) = $this->extractor($this->wherel);
+					if(count($this->wherel) > 0){
+						if(count($this->wheren) > 0 || count($this->where) > 0 || count($this->whereo) > 0){
+							$sql = $sql . ' AND ';
+						}
+						else{
+							$sql = $sql . ' WHERE ';
+						}
+						
+						for($i = 0; $i < count($name); $i+=1){
+							if($i === count($name)-1){
+								$sql = $sql . $name[$i] . ' LIKE "%' . $val[$i] . '%"';
+							}
+							else{
+								$sql = $sql . $name[$i] . ' LILE "%' . $val[$i] . '%" AND ';
+							}
+						}
+					}
+					
 					// IN BETWEEN
 					if(array_key_exists('between', $this->options)){
 						if(count($this->options['between']) == 0){
@@ -297,6 +353,13 @@
 					}
 				}
 				
+				// ASSC DESC
+				if(array_key_exists('emit', $this->options)){
+					if($this->options['emit'] == true){
+						$sql = $sql . ' DESC';
+					}
+				}
+				
 				// LIMIT
 				if(array_key_exists('limit', $this->options)){
 					if(!is_array($this->options['limit']) && !is_object($this->options)){
@@ -308,6 +371,9 @@
 						}
 					}
 				}
+				
+				
+				
 				return $sql;
 			}
 			elseif ($type === "delete") {
@@ -351,9 +417,17 @@
 					}
 				}
 				if(array_key_exists('u_id', $this->options)){
-					if(count($this->options['u_id']) == 1){
+					if(count($this->options['u_id']) >= 1){
 						list($key, $value) = $this->extractor($this->options['u_id']);
-						$sql = $sql . ' WHERE ' . $key[0] . '="' . $value[0] . '"';
+						for($i = 0; $i < count($key); $i++){
+							if($i == 0){
+								$sql = $sql . ' WHERE ' . $key[$i] . '="' . $value[$i] . '"';
+							}
+							else{
+								$sql = $sql . ' AND ' . $key[$i] . '="' . $value[$i] . '"';
+							}
+						}
+						
 					}
 				}
 				return $sql;
@@ -479,6 +553,29 @@
 				$this->wheren = array();
 			}
 			
+			if(array_key_exists('whereo', $this->options)){
+				if(count($this->options['whereo']) == 0){
+					$this->whereo = array();
+				}
+				else{
+					$this->whereo = $this->options['whereo'];
+				}
+			}
+			else{
+				$this->whereo = array();
+			}
+			
+			if(array_key_exists('wherel', $this->options)){
+				if(count($this->options['wherel']) == 0){
+					$this->wherel = array();
+				}
+				else{
+					$this->wherel = $this->options['wherel'];
+				}
+			}
+			else{
+				$this->wherel = array();
+			}
 			if(array_key_exists('between', $this->options)){
 				if(count($this->options['between']) == 0){
 					$this->between = array();
@@ -519,6 +616,12 @@
 			else{
 				$this->count = array();
 			}
+			if(array_key_exists('emit', $this->options)){
+				$this->emit = $this->options['emit'];
+			}
+			else{
+				$this->emit = false;
+			}
 			$this->className = $className;
 			$kwrgs = array();
 			$kwrgs['where'] = $this->where;
@@ -527,6 +630,9 @@
 			$kwrgs['count'] = $this->count;
 			$kwrgs['between'] = $this->between;
 			$kwrgs['wheren'] = $this->wheren;
+			$kwrgs['whereo'] = $this->whereo;
+			$kwrgs['wherel'] = $this->wherel;
+			$kwrgs['emit'] = $this->emit;
 			if(!is_null($this->limit)){
 				$kwrgs['limit'] = $this->limit;
 			}
